@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get 'reviews/create'
+  get 'reviews/destroy'
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Defines the root path route ("/")
@@ -8,12 +10,11 @@ Rails.application.routes.draw do
   # En tant qu’utilisateur, je peux marquer (bookmark) un film dans une liste de films.
   # En tant qu’utilisateur, je peux détruire un bookmark.
 
-  root 'lists#index'
-  resources :lists, only: %i[index new create show] do
-    # resources :bookmarks, only: %i[new create destroy]
-    # Create
-    get 'bookmarks/new', to: 'bookmarks#new', as: :new_bookmark
-    post 'bookmarks', to: 'bookmarks#create'
+  root to: 'lists#index'
+  resources :lists, except: %i[edit update] do
+    resources :bookmarks, only: %i[new create]
+    resources :reviews, only: :create
   end
-  delete 'bookmarks/:id', to: 'bookmarks#destroy', as: :destroy
+  resources :bookmarks, only: :destroy
+  resources :reviews, only: :destroy
 end

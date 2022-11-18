@@ -15,19 +15,22 @@ require "open-uri"
 
 puts 'Cleaning database...'
 Movie.destroy_all
+puts 'Database cleaned'
 
-response = URI.open('https://tmdb.lewagon.com/movie/top_rated?api_key=9b78c6fc925ba6550ca9996a354c3503').read
-movies = JSON.parse(response)
-
-puts 'Creating movies...'
-movies['results'].each do |movie|
-  film = Movie.new(
-    title: movie['title'],
-    overview: movie['overview'],
-    poster_url: movie['poster_path'],
-    rating: movie['vote_average']
-  )
-  film.save
-  puts "Created #{film.title}"
+url = 'http://tmdb.lewagon.com/movie/top_rated?api_key=9b78c6fc925ba6550ca9996a354c3503'
+10.times do |i|
+  puts "Importing movies from page #{i + 1}"
+  movies = JSON.parse(URI.open("#{url}?page=#{i + 1}").read)['results']
+  movies.each do |movie|
+    puts "Creating #{movie['title']}"
+    base_poster_url = 'https://image.tmdb.org/t/p/original'
+    Movie.create(
+      title: movie['title'],
+      overview: movie['overview'],
+      poster_url: "#{base_poster_url}#{movie['backdrop_path']}",
+      rating: movie['vote_average']
+    )
+    puts "Created #{movie['title']}"
+  end
 end
 puts 'Finished!'
