@@ -17,7 +17,7 @@ puts 'Cleaning database...'
 Movie.destroy_all
 puts 'Database cleaned'
 
-url = 'http://tmdb.lewagon.com/movie/top_rated?api_key=9b78c6fc925ba6550ca9996a354c3503'
+url = 'http://tmdb.lewagon.com/movie/top_rated'
 10.times do |i|
   puts "Importing movies from page #{i + 1}"
   movies = JSON.parse(URI.open("#{url}?page=#{i + 1}").read)['results']
